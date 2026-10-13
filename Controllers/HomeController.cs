@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+using GuestbookApp.Data;
 using GuestbookApp.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,31 +6,46 @@ namespace GuestbookApp.Controllers;
 
 public class HomeController : Controller
 {
-    private static readonly ConcurrentQueue<GuestEntry> Entries = new();
+    private readonly IGuestbookRepository _guestbookRepository;
+
+    public HomeController(IGuestbookRepository guestbookRepository)
+    {
+        _guestbookRepository = guestbookRepository;
+    }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View(CreatePageModel());
+        var entries = await _guestbookRepository.GetAllEntriesAsync();
+        return View(new GuestbookPageViewModel
+        {
+            Entries = entries
+        });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Index(GuestEntry input)
+    public async Task<IActionResult> Index(GuestEntry input)
     {
         if (!ModelState.IsValid)
         {
-            var page = CreatePageModel();
-            page.Input = input;
+            var entries = await _guestbookRepository.GetAllEntriesAsync();
+            var page = new GuestbookPageViewModel
+            {
+                Input = input,
+                Entries = entries
+            };
             return View(page);
         }
 
         input.Name = input.Name.Trim();
         input.Address = input.Address.Trim();
+        input.Message = string.IsNullOrWhiteSpace(input.Message) ? null : input.Message.Trim();
         input.CreatedAt = DateTimeOffset.Now;
-        Entries.Enqueue(input);
 
-        TempData["SuccessMessage"] = "Terima kasih, kunjungan Anda sudah tercatat.";
+        await _guestbookRepository.AddEntryAsync(input);
+
+        TempData["SuccessMessage"] = "Terima kasih, catatan kunjungan Anda berhasil disimpan ke database SQLite!";
         return RedirectToAction(nameof(Index));
     }
 
@@ -38,13 +53,5 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View();
-    }
-
-    private static GuestbookPageViewModel CreatePageModel()
-    {
-        return new GuestbookPageViewModel
-        {
-            Entries = Entries.ToArray().Reverse().ToArray()
-        };
     }
 }

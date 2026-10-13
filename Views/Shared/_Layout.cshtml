@@ -3,25 +3,53 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f4f2e9" />
+    <meta name="theme-color" content="#fff1f5" />
     <title>@ViewData["Title"] - Buku Tamu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
+    <div class="ambient-glow ambient-glow-1" aria-hidden="true"></div>
+    <div class="ambient-glow ambient-glow-2" aria-hidden="true"></div>
+
     <header class="site-header">
         <a class="brand" asp-controller="Home" asp-action="Index" aria-label="Buku Tamu, beranda">
-            <span class="brand-mark" aria-hidden="true">BT</span>
-            <span>Buku Tamu</span>
+            <span class="brand-mark" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    <path d="M12 6h4"></path>
+                    <path d="M12 10h4"></path>
+                </svg>
+            </span>
+            <div class="brand-text">
+                <span class="brand-title">Buku Tamu</span>
+                <span class="brand-subtitle">Catatan Kunjungan</span>
+            </div>
         </a>
-        <span class="header-note">CATATAN KUNJUNGAN</span>
+        <div class="header-pill">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span>SQLite Connected</span>
+        </div>
     </header>
-    <main>
+
+    <main id="main-content">
         @RenderBody()
     </main>
+
     <footer class="site-footer">
-        <span>Terima kasih telah meluangkan waktu untuk berkunjung.</span>
-        <span class="footer-year">BUKU TAMU · 2026</span>
+        <div class="footer-left">
+            <span class="footer-heart" aria-hidden="true">♥</span>
+            <span>Terima kasih telah meluangkan waktu untuk hadir dan berkunjung.</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-badge">Buku Tamu · SQLite Edition</span>
+            <span class="footer-year">© 2026</span>
+        </div>
     </footer>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

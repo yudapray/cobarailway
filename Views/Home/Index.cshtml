@@ -1,77 +1,202 @@
 @model GuestbookPageViewModel
 @{
-    ViewData["Title"] = "Buku Tamu";
+    ViewData["Title"] = "Buku Tamu Digital";
+}
+
+@functions {
+    string GetInitial(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "G";
+        var trimmed = name.Trim();
+        return trimmed.Length > 0 ? char.ToUpper(trimmed[0]).ToString() : "G";
+    }
 }
 
 <section class="intro">
-    <p class="eyebrow"><span class="eyebrow-dot"></span> SELAMAT DATANG</p>
-    <h1>Senang Anda<br /><em>mampir.</em></h1>
-    <p class="intro-copy">Tinggalkan nama dan alamat Anda sebagai kenang-kenangan kunjungan hari ini.</p>
+    <div class="intro-badge">
+        <span class="intro-badge-icon" aria-hidden="true">🌸</span>
+        <span>SELAMAT DATANG DI BUKU TAMU</span>
+    </div>
+    <h1 class="intro-title">
+        Senang Anda<br />
+        <span class="intro-highlight">mampir ke sini.</span>
+    </h1>
+    <p class="intro-copy">
+        Tinggalkan nama, kota asal, serta kenang-kenangan kunjungan Anda.
+        Setiap catatan disimpan dengan rapi dan aman ke dalam database <strong>SQLite</strong>.
+    </p>
+
+    <div class="stats-ribbon">
+        <div class="stat-pill">
+            <span class="stat-pill-dot" aria-hidden="true"></span>
+            <span class="stat-pill-label">Total Pengunjung:</span>
+            <strong class="stat-pill-value">@Model.Entries.Count</strong>
+        </div>
+        <div class="stat-pill">
+            <span class="stat-pill-icon" aria-hidden="true">💾</span>
+            <span class="stat-pill-label">Penyimpanan:</span>
+            <strong class="stat-pill-value">SQLite Database</strong>
+        </div>
+        <div class="stat-pill">
+            <span class="stat-pill-icon" aria-hidden="true">⚡</span>
+            <span class="stat-pill-label">Status:</span>
+            <strong class="stat-pill-value stat-live">Aktif</strong>
+        </div>
+    </div>
 </section>
 
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="success-alert" role="status">
+        <div class="success-alert-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+        <div class="success-alert-text">
+            <strong>Berhasil Tersimpan!</strong>
+            <p>@successMessage</p>
+        </div>
+    </div>
+}
+
 <div class="content-grid">
-    <section class="form-panel" aria-labelledby="form-heading">
-        <div class="panel-heading">
-            <span class="section-index">01</span>
-            <h2 id="form-heading">Isi buku tamu</h2>
+    <!-- Panel Formulir -->
+    <section class="panel-card form-panel" aria-labelledby="form-heading">
+        <div class="panel-header">
+            <div class="panel-title-wrap">
+                <span class="panel-tag">01</span>
+                <div>
+                    <h2 id="form-heading" class="panel-title">Isi Buku Tamu</h2>
+                    <p class="panel-subtitle">Tulis kehadiran Anda di formulir ini</p>
+                </div>
+            </div>
+            <span class="panel-deco-icon" aria-hidden="true">✍️</span>
         </div>
 
-        @if (TempData["SuccessMessage"] is string successMessage)
-        {
-            <div class="success-message" role="status">@successMessage</div>
-        }
-
-        <form asp-controller="Home" asp-action="Index" method="post" class="guest-form">
+        <form asp-controller="Home" asp-action="Index" method="post" class="guest-form" novalidate>
             <div asp-validation-summary="ModelOnly" class="validation-summary" role="alert"></div>
-            <div class="field-group">
-                <label asp-for="Input.Name"></label>
-                <input asp-for="Input.Name" autocomplete="name" placeholder="Nama lengkap Anda" />
+
+            <div class="form-field">
+                <label asp-for="Input.Name">
+                    <span class="field-icon" aria-hidden="true">👤</span>
+                    <span>Nama Lengkap <span class="required-star">*</span></span>
+                </label>
+                <div class="input-wrap">
+                    <input asp-for="Input.Name" autocomplete="name" placeholder="Misal: Adelia Pramesti" required />
+                </div>
                 <span asp-validation-for="Input.Name" class="field-error"></span>
             </div>
-            <div class="field-group">
-                <label asp-for="Input.Address"></label>
-                <textarea asp-for="Input.Address" rows="3" autocomplete="street-address" placeholder="Kota atau alamat tempat tinggal"></textarea>
+
+            <div class="form-field">
+                <label asp-for="Input.Address">
+                    <span class="field-icon" aria-hidden="true">📍</span>
+                    <span>Asal Kota / Alamat <span class="required-star">*</span></span>
+                </label>
+                <div class="input-wrap">
+                    <input asp-for="Input.Address" autocomplete="street-address" placeholder="Misal: Bandung, Jawa Barat" required />
+                </div>
                 <span asp-validation-for="Input.Address" class="field-error"></span>
             </div>
-            <button class="submit-button" type="submit">
-                <span>Kirim catatan</span>
-                <span aria-hidden="true">&#8599;</span>
+
+            <div class="form-field">
+                <label asp-for="Input.Message">
+                    <span class="field-icon" aria-hidden="true">💬</span>
+                    <span>Pesan / Ucapan <span class="optional-badge">Opsional</span></span>
+                </label>
+                <div class="input-wrap">
+                    <textarea asp-for="Input.Message" rows="3" placeholder="Tuliskan ucapan, doa, atau kesan kunjungan Anda di sini..."></textarea>
+                </div>
+                <span asp-validation-for="Input.Message" class="field-error"></span>
+            </div>
+
+            <button class="submit-btn" type="submit">
+                <span class="btn-text">Simpan Catatan Tamu</span>
+                <span class="btn-arrow" aria-hidden="true">&#8599;</span>
             </button>
         </form>
-        <p class="privacy-note">Informasi Anda hanya digunakan untuk catatan kunjungan.</p>
+
+        <div class="form-footer-note">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>Catatan disimpan secara lokal di file database SQLite server.</span>
+        </div>
     </section>
 
-    <section class="entries-panel" aria-labelledby="entries-heading">
-        <div class="panel-heading entries-heading">
-            <div>
-                <span class="section-index">02</span>
-                <h2 id="entries-heading">Catatan pengunjung</h2>
+    <!-- Panel Catatan Pengunjung -->
+    <section class="panel-card entries-panel" aria-labelledby="entries-heading">
+        <div class="panel-header entries-header">
+            <div class="panel-title-wrap">
+                <span class="panel-tag">02</span>
+                <div>
+                    <h2 id="entries-heading" class="panel-title">Catatan Pengunjung</h2>
+                    <p class="panel-subtitle">Daftar sahabat yang telah berkunjung</p>
+                </div>
             </div>
-            <span class="entry-count">@Model.Entries.Count.ToString("00")</span>
+            <div class="counter-badge">
+                <span class="counter-number">@Model.Entries.Count</span>
+                <span class="counter-unit">Tamu</span>
+            </div>
         </div>
 
         @if (Model.Entries.Count == 0)
         {
             <div class="empty-state">
-                <span class="empty-mark" aria-hidden="true">+</span>
-                <p>Belum ada catatan.</p>
-                <span>Jadilah yang pertama mengisi buku tamu.</span>
+                <div class="empty-icon-wrap" aria-hidden="true">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                </div>
+                <h3 class="empty-title">Belum Ada Catatan</h3>
+                <p class="empty-desc">Buku tamu masih kosong dan siap mencatat kehadiran Anda.</p>
+                <span class="empty-cta">Jadilah yang pertama mengisi buku tamu ini! ✨</span>
             </div>
         }
         else
         {
-            <ol class="entry-list">
-                @foreach (var entry in Model.Entries)
-                {
-                    <li class="entry-item">
-                        <div class="entry-topline">
-                            <h3>@entry.Name</h3>
-                            <time datetime="@entry.CreatedAt.ToString("O")">@entry.CreatedAt.ToLocalTime().ToString("dd MMM yyyy · HH:mm")</time>
-                        </div>
-                        <p>@entry.Address</p>
-                    </li>
-                }
-            </ol>
+            <div class="entry-list-container">
+                <ol class="entry-list">
+                    @foreach (var entry in Model.Entries)
+                    {
+                        <li class="entry-card">
+                            <div class="entry-header">
+                                <div class="guest-identity">
+                                    <div class="guest-avatar" aria-hidden="true">
+                                        @GetInitial(entry.Name)
+                                    </div>
+                                    <div class="guest-info">
+                                        <h3 class="guest-name">@entry.Name</h3>
+                                        <div class="guest-location">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                                <circle cx="12" cy="10" r="3"></circle>
+                                            </svg>
+                                            <span>@entry.Address</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <time class="entry-time" datetime="@entry.CreatedAt.ToString("O")" title="@entry.CreatedAt.ToLocalTime().ToString("f")">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12 6 12 12 16 14"></polyline>
+                                    </svg>
+                                    <span>@entry.CreatedAt.ToLocalTime().ToString("dd MMM yyyy · HH:mm")</span>
+                                </time>
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(entry.Message))
+                            {
+                                <div class="entry-bubble">
+                                    <p class="entry-message">“@entry.Message”</p>
+                                </div>
+                            }
+                        </li>
+                    }
+                </ol>
+            </div>
         }
     </section>
 </div>

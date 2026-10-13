@@ -1,18 +1,38 @@
-# Buku Tamu
+# Buku Tamu Digital
 
-Aplikasi buku tamu sederhana menggunakan ASP.NET Core MVC dan C#.
+Aplikasi buku tamu modern dengan desain *soft pink aesthetic* yang elegan dan nyaman dipandang, menggunakan ASP.NET Core MVC, C#, dan penyimpanan permanen berbasis SQLite.
 
-## Menjalankan aplikasi
+## Fitur Utama
 
-Pasang .NET SDK `10.0.401`, lalu jalankan perintah berikut dari folder proyek:
+- **Desain Bernuansa Merah Muda (Soft Pink & Rose Aesthetic):**
+  - Kombinasi palet pastel blush, rose, dan warm ivory yang lembut dan ramah di mata (*eye-friendly*).
+  - Aksen tipografi Playfair Display & Plus Jakarta Sans yang rapi dan modern.
+  - Kartu formulir dan daftar pengunjung interaktif dengan inisial avatar dinamis.
+  - Notifikasi sukses dan badge indikator koneksi SQLite langsung di antarmuka.
+- **Penyimpanan Database SQLite:**
+  - Data buku tamu disimpan secara permanen di file SQLite (`App_Data/guestbook.db`).
+  - Dilengkapi migrasi tabel otomatis saat aplikasi pertama kali dijalankan.
+  - Mendukung input Nama Lengkap, Asal Kota / Alamat, serta Pesan/Kesan opsional.
+  - Parameterized queries untuk mencegah SQL Injection.
+
+## Menjalankan Aplikasi
+
+Jalankan perintah berikut dari folder proyek:
 
 ```powershell
-dotnet restore
 dotnet run
 ```
 
-Buka URL yang ditampilkan oleh `dotnet run` di browser. Isian nama dan alamat divalidasi di server, lalu ditampilkan pada daftar catatan pengunjung.
+Buka URL yang ditampilkan oleh terminal (misal: `http://localhost:5000` atau `https://localhost:5001`) di browser.
 
-## Penyimpanan
+## Konfigurasi Database
 
-Data saat ini disimpan di memori proses dan akan kosong kembali ketika aplikasi dimulai ulang. Untuk penggunaan permanen, hubungkan ke database seperti SQLite atau SQL Server.
+Lokasi database SQLite dapat dikonfigurasi melalui `appsettings.json`:
+
+```json
+{
+  "ConnectionStrings": {
+    "GuestbookDb": "Data Source=App_Data/guestbook.db"
+  }
+}
+```

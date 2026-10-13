@@ -3,8 +3,17 @@
 }
 
 <section class="intro error-page">
-    <p class="eyebrow"><span class="eyebrow-dot"></span> MOHON MAAF</p>
-    <h1>Ada yang<br /><em>terlewat.</em></h1>
-    <p class="intro-copy">Permintaan Anda belum dapat diproses. Silakan kembali ke halaman buku tamu.</p>
-    <a class="back-link" asp-controller="Home" asp-action="Index">Kembali ke buku tamu <span aria-hidden="true">&#8599;</span></a>
+    <div class="intro-badge">
+        <span class="intro-badge-icon" aria-hidden="true">⚠️</span>
+        <span>MOHON MAAF</span>
+    </div>
+    <h1 class="intro-title">
+        Ada yang<br />
+        <span class="intro-highlight">terlewat.</span>
+    </h1>
+    <p class="intro-copy">Permintaan Anda belum dapat diproses. Silakan kembali ke halaman utama buku tamu.</p>
+    <a class="back-link" asp-controller="Home" asp-action="Index">
+        <span>Kembali ke Buku Tamu</span>
+        <span aria-hidden="true">&#8599;</span>
+    </a>
 </section>

@@ -1,6 +1,9 @@
+using GuestbookApp.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton<IGuestbookRepository, GuestbookRepository>();
 
 var app = builder.Build();
 
