@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f2e9" />
+    <title>@ViewData["Title"] - Buku Tamu</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" asp-controller="Home" asp-action="Index" aria-label="Buku Tamu, beranda">
+            <span class="brand-mark" aria-hidden="true">BT</span>
+            <span>Buku Tamu</span>
+        </a>
+        <span class="header-note">CATATAN KUNJUNGAN</span>
+    </header>
+    <main>
+        @RenderBody()
+    </main>
+    <footer class="site-footer">
+        <span>Terima kasih telah meluangkan waktu untuk berkunjung.</span>
+        <span class="footer-year">BUKU TAMU · 2026</span>
+    </footer>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

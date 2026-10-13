@@ -1,0 +1,77 @@
+@model GuestbookPageViewModel
+@{
+    ViewData["Title"] = "Buku Tamu";
+}
+
+<section class="intro">
+    <p class="eyebrow"><span class="eyebrow-dot"></span> SELAMAT DATANG</p>
+    <h1>Senang Anda<br /><em>mampir.</em></h1>
+    <p class="intro-copy">Tinggalkan nama dan alamat Anda sebagai kenang-kenangan kunjungan hari ini.</p>
+</section>
+
+<div class="content-grid">
+    <section class="form-panel" aria-labelledby="form-heading">
+        <div class="panel-heading">
+            <span class="section-index">01</span>
+            <h2 id="form-heading">Isi buku tamu</h2>
+        </div>
+
+        @if (TempData["SuccessMessage"] is string successMessage)
+        {
+            <div class="success-message" role="status">@successMessage</div>
+        }
+
+        <form asp-controller="Home" asp-action="Index" method="post" class="guest-form">
+            <div asp-validation-summary="ModelOnly" class="validation-summary" role="alert"></div>
+            <div class="field-group">
+                <label asp-for="Input.Name"></label>
+                <input asp-for="Input.Name" autocomplete="name" placeholder="Nama lengkap Anda" />
+                <span asp-validation-for="Input.Name" class="field-error"></span>
+            </div>
+            <div class="field-group">
+                <label asp-for="Input.Address"></label>
+                <textarea asp-for="Input.Address" rows="3" autocomplete="street-address" placeholder="Kota atau alamat tempat tinggal"></textarea>
+                <span asp-validation-for="Input.Address" class="field-error"></span>
+            </div>
+            <button class="submit-button" type="submit">
+                <span>Kirim catatan</span>
+                <span aria-hidden="true">&#8599;</span>
+            </button>
+        </form>
+        <p class="privacy-note">Informasi Anda hanya digunakan untuk catatan kunjungan.</p>
+    </section>
+
+    <section class="entries-panel" aria-labelledby="entries-heading">
+        <div class="panel-heading entries-heading">
+            <div>
+                <span class="section-index">02</span>
+                <h2 id="entries-heading">Catatan pengunjung</h2>
+            </div>
+            <span class="entry-count">@Model.Entries.Count.ToString("00")</span>
+        </div>
+
+        @if (Model.Entries.Count == 0)
+        {
+            <div class="empty-state">
+                <span class="empty-mark" aria-hidden="true">+</span>
+                <p>Belum ada catatan.</p>
+                <span>Jadilah yang pertama mengisi buku tamu.</span>
+            </div>
+        }
+        else
+        {
+            <ol class="entry-list">
+                @foreach (var entry in Model.Entries)
+                {
+                    <li class="entry-item">
+                        <div class="entry-topline">
+                            <h3>@entry.Name</h3>
+                            <time datetime="@entry.CreatedAt.ToString("O")">@entry.CreatedAt.ToLocalTime().ToString("dd MMM yyyy · HH:mm")</time>
+                        </div>
+                        <p>@entry.Address</p>
+                    </li>
+                }
+            </ol>
+        }
+    </section>
+</div>
